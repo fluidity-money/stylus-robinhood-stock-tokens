@@ -1,0 +1,27 @@
+[package]
+name = "stylus-robinhood-stock-tokens"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+description = "Stylus crate to look up stock token metadata."
+homepage = "https://github.com/fluidity-money/stylus-robinhood-stock-tokens"
+repository = "https://github.com/fluidity-money/stylus-robinhood-stock-tokens"
+
+[dependencies]
+bobcat-call = { version = ">=0.10.0", default-features = false, optional = true, features = ["dont-define-symbols"] }
+bobcat-cd = { version = ">=0.10.0", default-features = false }
+bobcat-interfaces = { version = ">=0.10.0", default-features = false }
+bobcat-maths = { version = ">=0.10.0", default-features = false, optional = true }
+stylus-chainlink-price-feeds = { version = ">=0.2.0", default-features = false }
+stylus-sdk = { version = ">=0.10.0", default-features = false, optional = true }
+
+[features]
+bobcat-sdk = [
+    "dep:bobcat-call",
+    "dep:bobcat-maths",
+    "stylus-chainlink-price-feeds/bobcat-sdk",
+]
+stylus-sdk = [
+    "dep:stylus-sdk",
+    "stylus-chainlink-price-feeds/stylus-sdk",
+]
