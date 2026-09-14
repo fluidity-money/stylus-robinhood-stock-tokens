@@ -6,14 +6,16 @@ use bobcat_maths::U;
 
 pub use stylus_chainlink_price_feeds::PriceFeed;
 
-pub(crate) use bobcat_interfaces::robinhood_stock_tokens::*;
+pub(crate) use bobcat_interfaces::{eip20::*, robinhood_stock_tokens::*};
+
+pub type Address = [u8; 20];
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Eip712Domain {
     pub fields: u8,
     pub name: &'static str,
     pub version: &'static str,
-    pub verifying_contract: [u8; 20],
+    pub verifying_contract: Address,
     pub salt: U,
 }
 
@@ -58,7 +60,7 @@ pub enum StockToken {
 
 impl StockToken {
     /// Returns the canonical token contract address on Robinhood Chain.
-    pub const fn addr(self) -> [u8; 20] {
+    pub const fn addr(self) -> Address {
         match self {
             Self::Aapl => address!(b"aF3D76f1834A1d425780943C99Ea8A608f8a93f9"),
             Self::Amd => address!(b"86923f96303D656E4aa86D9d42D1e57ad2023fdC"),
@@ -184,7 +186,7 @@ impl StockToken {
         }
     }
 
-    pub const fn oracle_addr(self) -> [u8; 20] {
+    pub const fn oracle_addr(self) -> Address {
         self.oracle().addr()
     }
 
@@ -446,125 +448,159 @@ impl StockToken {
         match self {
             Self::Aapl => U::const_from_hex(
                 b"ddc20599e9f8b3f5f24eea08e26e58b564138e2a2a0dbd21bf8374048ebf4424",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Amd => U::const_from_hex(
                 b"4f7414a49b594198b251cf4472210c75949ec78b3769b8ead702acc0609fee17",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Amzn => U::const_from_hex(
                 b"9e4222dc88867f1329aa6acc5a1aa81b45bf4132906300ba82ff43ec14a61a01",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Asml => U::const_from_hex(
                 b"06494358a2f8735929cde930daf03cfab8148f85bbe47500e77acdd4eb9206e3",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Baba => U::const_from_hex(
                 b"726b1c341c9f212157b71f35c757b0276c188355ef1e1d36318c9e3cf7f17aee",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Clsk => U::const_from_hex(
                 b"876668158311b1ab24ea818c972c201c837e078ff0e67a41bdc119e7e14c2b0b",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Coin => U::const_from_hex(
                 b"3864acb9626f80b5eab61355dde07a0ed372439c073052a64d235be0e4550156",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Crcl => U::const_from_hex(
                 b"4c54d092a713ecb31538b6310161eafafe84be23a34125c02f714ff6c1787b27",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Crwv => U::const_from_hex(
                 b"4aa7f796561126f7fae63f6b694c9b1869158506da30459c367ac1462e3285f4",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Dell => U::const_from_hex(
                 b"8fc7daf61243cc7aac591b00d86e7b5787164c246f33fcc9847ab7ca42ec40c3",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Ewy => U::const_from_hex(
                 b"03a48248d12094755fb9d44ec881fd4ec746e483aad1d14ae5249f38d3e485ff",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Gme => U::const_from_hex(
                 b"136826e77a7b9207850ddc1f9b91462a328bd7bd1f1ba283f2e5340acc545e03",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Googl => U::const_from_hex(
                 b"e4ce632a06b61144c31debb5cc23eec6986efdf45f8d3d89999b573fa2d231fc",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Intc => U::const_from_hex(
                 b"85d74cda4a25cd675da552b3629bfa6eddfed98be3a18aea9ec916af69d53b27",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Ionq => U::const_from_hex(
                 b"c00517054ac490ed7bce3e7fee22be16a4e46f3b34a79e4788aea83262b43191",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Meta => U::const_from_hex(
                 b"5e515e21dee007a77d5f9d11e943ea0c69890552610fcf75a938700339567d92",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Msft => U::const_from_hex(
                 b"fe5532dffb5037a32acae81fc1a5a61964cfdb985b27fa09d884577c922443b6",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Mstr => U::const_from_hex(
                 b"3bb1a8a59dcefb3849920b51c09fb1457850ba40331872ff67f1aac713aa2d0c",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Mu => U::const_from_hex(
                 b"9ff9c5233d52b3a66de0b121a7ba0d3e5fbee472de9e2f528ddfde83c2659414",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Nbis => U::const_from_hex(
                 b"58842ac1dba751de2b3a68b0985fdee45268c408755b3d30a87de9a14ed8db57",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Nvda => U::const_from_hex(
                 b"9561b23bbb0b6a2c7eecb765b6ae196568c31251e7086d435234d3017abcf6f7",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Orcl => U::const_from_hex(
                 b"dc34df1f13cf1dff2e88b69ad2fde88334f497b09f98a6c8efbb2c187f7b02bb",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Pltr => U::const_from_hex(
                 b"e82099e80d9d8c01951d96841c85652b71b80feb5cf1e1bd25c87d22d14f13b7",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Qqq => U::const_from_hex(
                 b"0d742aa0bc660a58e10d0b613abeb775e4c6ce80c31919e718f74190a6eed95e",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Rgti => U::const_from_hex(
                 b"edd1fa6716b64970ae051556e59bd0d0c241b2ab62f1f6af2c47a34ff8ebfc10",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Rklb => U::const_from_hex(
                 b"99473716d76d7559f7921bf687bf151f676affa69dfb1ccf7f3857c893304ad2",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Sgov => U::const_from_hex(
                 b"325c877912a82763ee194675f1477d9e520ee632778d19ec3c6dd4a4592ac7bd",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Slv => U::const_from_hex(
                 b"a098536349e39e26371e37bfa1fbc1cae5db238b779741cbd5b62d3cd5b15f9c",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Sndk => U::const_from_hex(
                 b"1612568f77316762559269c41b79f1f679d3af7c9f86c1a632ff88d07799d0ef",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Spcx => U::const_from_hex(
                 b"0690c9efe70baa4d30911aebe56cd6fb3ae53c5202bc1f39c7b155d399c682cf",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Spy => U::const_from_hex(
                 b"9664225da5421089c71fcde532a8a45100a788b0adc7c45dbb4fe72320cfb527",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Tsla => U::const_from_hex(
                 b"aed03ce8fb70819d92adddf9b9dd4fbb2f32f0e37b6d5937b441c17549d83ed8",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Tsm => U::const_from_hex(
                 b"55c66118aa4278aab657b61ac4017ac63c4f8149da74e37b087e8fb47ce4df74",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Usar => U::const_from_hex(
                 b"9479467d8d45a26a2d00d75edac17a1e086c8386770b22effaa3fc89b7ca9b20",
-            ).unwrap(),
+            )
+            .unwrap(),
             Self::Uso => U::const_from_hex(
                 b"0b13e14566ffdd0691d584222002bbec8a1230846e7ae88971c1072ae5fbc174",
-            ).unwrap(),
+            )
+            .unwrap(),
         }
     }
 }
 
-impl From<StockToken> for [u8; 20] {
+impl From<StockToken> for Address {
     fn from(token: StockToken) -> Self {
         token.addr()
     }
 }
 
-/// Price lookup through `stylus-chainlink-price-feeds`' Bobcat backend.
 #[cfg(feature = "bobcat-sdk")]
 pub mod bobcat {
     use bobcat_maths::U;
 
-    use bobcat_call::{static_call_bool_opt, static_call_word_opt};
+    use bobcat_call::{call_bool, static_call_bool_opt, static_call_word_opt};
 
     use stylus_chainlink_price_feeds::get_latest_round_data_opt;
 
@@ -590,26 +626,229 @@ pub mod bobcat {
     }
 
     pub fn ui_multiplier(t: StockToken) -> Option<U> {
-        static_call_word_opt(t.addr(), &SEL_ORACLE_PAUSED, u64::MAX, 0)
+        static_call_word_opt(t.addr(), &SEL_UI_MULTIPLIER, u64::MAX, 0)
+    }
+
+    pub fn new_ui_multiplier(t: StockToken) -> Option<U> {
+        static_call_word_opt(t.addr(), &SEL_NEW_UI_MULTIPLIER, u64::MAX, 0)
+    }
+
+    pub fn transfer(t: StockToken, recipient: Address, amt: U) -> bool {
+        call_bool(t.addr(), &make_fn_transfer(recipient, &amt), &U::ZERO, u64::MAX)
+    }
+
+    pub fn transfer_from(t: StockToken, from: Address, recipient: Address, amt: U) -> bool {
+        call_bool(
+            t.addr(),
+            &make_fn_transfer_from(from, recipient, &amt),
+            &U::ZERO,
+            u64::MAX,
+        )
+    }
+
+    pub fn permit(t: StockToken, owner: Address, spender: Address, value: U, deadline: U, v: u8, r: U, s: U) -> bool {
+         call_bool(
+             t.addr(),
+             &make_fn_permit(owner, spender, &value, &deadline, v, &r, &s),
+             &U::ZERO,
+             u64::MAX
+         )
     }
 }
 
 #[cfg(feature = "stylus-sdk")]
 pub mod stylus {
-    use stylus_chainlink_price_feeds::{ErrGetLatestRoundData, get_latest_round_data};
-    use stylus_sdk::{
-        alloy_primitives::U256,
-        prelude::{Host, StaticCallContext},
+    extern crate alloc;
+
+    use alloc::vec::Vec;
+
+    use stylus_chainlink_price_feeds::{
+        ErrGetLatestRoundData, ErrGetLatestRoundDataReason, get_latest_round_data,
     };
 
-    use crate::StockToken;
+    use core::fmt::{Display, Formatter, Result as FmtResult};
 
-    pub fn price<H, C>(host: &H, ctx: C, t: StockToken) -> Result<U256, ErrGetLatestRoundData>
+    use stylus_sdk::{
+        alloy_primitives::{Address as StylusAddr, U256, FixedBytes},
+        call,
+        prelude::{
+            Host, MutatingCallContext, StaticCallContext, calls::errors::Error as StylusError,
+        },
+    };
+
+    use super::*;
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub enum ErrContractCallReason {
+        Revert,
+        BadRd,
+    }
+
+    #[derive(Debug, Clone, PartialEq)]
+    pub struct ErrContractCall(Vec<u8>, ErrContractCallReason);
+
+    impl Display for ErrContractCallReason {
+        fn fmt(&self, f: &mut Formatter<'_>) -> FmtResult {
+            write!(f, "{self:?}")
+        }
+    }
+
+    impl core::error::Error for ErrContractCallReason {}
+
+    pub fn price<H, C>(host: &H, ctx: C, t: StockToken) -> Result<U256, ErrContractCall>
     where
         H: Host + ?Sized,
         C: StaticCallContext,
     {
-        get_latest_round_data(host, ctx, t.oracle())
+        get_latest_round_data(host, ctx, t.oracle()).map_err(|ErrGetLatestRoundData(x, v)| {
+            match (x, v) {
+                (x, ErrGetLatestRoundDataReason::Revert) => {
+                    ErrContractCall(x, ErrContractCallReason::Revert)
+                }
+                (x, ErrGetLatestRoundDataReason::BadRd) => {
+                    ErrContractCall(x, ErrContractCallReason::BadRd)
+                }
+            }
+        })
+    }
+
+    fn static_call<H, C>(
+        cd: &[u8],
+        host: &H,
+        ctx: C,
+        t: StockToken,
+    ) -> Result<Vec<u8>, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        call::static_call(host, ctx, StylusAddr::from(t.addr()), cd).map_err(|v| match v {
+            StylusError::Revert(v) => ErrContractCall(v, ErrContractCallReason::Revert),
+            _ => unimplemented!(),
+        })
+    }
+
+    pub fn paused<H, C>(host: &H, ctx: C, t: StockToken) -> Result<bool, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        Ok(static_call(&SEL_PAUSED, host, ctx, t)?[31] != 0)
+    }
+
+    pub fn token_paused<H, C>(host: &H, ctx: C, t: StockToken) -> Result<bool, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        Ok(static_call(&SEL_TOKEN_PAUSED, host, ctx, t)?[31] != 0)
+    }
+
+    pub fn oracle_paused<H, C>(host: &H, ctx: C, t: StockToken) -> Result<bool, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        Ok(static_call(&SEL_ORACLE_PAUSED, host, ctx, t)?[31] != 0)
+    }
+
+    pub fn ui_multiplier<H, C>(host: &H, ctx: C, t: StockToken) -> Result<U256, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        let rd = static_call(&SEL_UI_MULTIPLIER, host, ctx, t)?;
+        U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
+    }
+
+    pub fn new_ui_multiplier<H, C>(host: &H, ctx: C, t: StockToken) -> Result<U256, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        let rd = static_call(&SEL_NEW_UI_MULTIPLIER, host, ctx, t)?;
+        U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
+    }
+
+    fn call<H, C>(cd: &[u8], host: &H, ctx: C, t: StockToken) -> Result<Vec<u8>, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: MutatingCallContext,
+    {
+        call::call(host, ctx, StylusAddr::from(t.addr()), cd).map_err(|v| match v {
+            StylusError::Revert(v) => ErrContractCall(v, ErrContractCallReason::Revert),
+            _ => unimplemented!(),
+        })
+    }
+
+    pub fn transfer<H, C>(
+        host: &H,
+        ctx: C,
+        t: StockToken,
+        StylusAddr(recipient): StylusAddr,
+        amt: U256,
+    ) -> Result<U256, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: MutatingCallContext,
+    {
+        let amt: [u8; 32] = amt.to_be_bytes();
+        let rd = call(
+            &make_fn_transfer(*recipient, &amt.into()),
+            host,
+            ctx,
+            t,
+        )?;
+        U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
+    }
+
+    pub fn transfer_from<H, C>(
+        host: &H,
+        ctx: C,
+        t: StockToken,
+        StylusAddr(from): StylusAddr,
+        StylusAddr(recipient): StylusAddr,
+        amt: U256,
+    ) -> Result<U256, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: MutatingCallContext,
+    {
+        let amt: [u8; 32] = amt.to_be_bytes();
+        let rd = call(
+            &make_fn_transfer_from(*from, *recipient, &amt.into()),
+            host,
+            ctx,
+            t,
+        )?;
+        U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
+    }
+
+    pub fn permit<H, C>(
+        host: &H,
+        ctx: C,
+        t: StockToken,
+        StylusAddr(owner): StylusAddr,
+        StylusAddr(spender): StylusAddr,
+        value: U256,
+        deadline: U256,
+        v: u8,
+        FixedBytes(r): FixedBytes<32>,
+        FixedBytes(s): FixedBytes<32>
+    ) -> Result<U256, ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: MutatingCallContext,
+    {
+        let value: [u8; 32] = value.to_be_bytes();
+        let deadline: [u8; 32] = deadline.to_be_bytes();
+        let rd = call(
+            &make_fn_permit(*owner, *spender, &value.into(), &deadline.into(), v, &r.into(), &s.into()),
+            host,
+            ctx,
+            t,
+        )?;
+        U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
     }
 }
 

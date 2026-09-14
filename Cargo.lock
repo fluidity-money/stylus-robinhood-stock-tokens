@@ -922,9 +922,9 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "stylus-chainlink-price-feeds"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f768d9ac2f641d67d9e2fa15d70e1ecf3be2f5352a906ac9e3028632db7232d"
+checksum = "a2c3d1a36cea8e041bf3e31d51c4a287e89c6bf0f0b1a2719be5e1abd8f5f879"
 dependencies = [
  "bobcat-call",
  "bobcat-cd",

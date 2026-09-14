@@ -9,10 +9,10 @@ repository = "https://github.com/fluidity-money/stylus-robinhood-stock-tokens"
 
 [dependencies]
 bobcat-cd = { version = ">=0.9.8", default-features = false }
-bobcat-call = { version = ">=0.9.8", default-features = false, optional = true }
+bobcat-call = { version = ">=0.9.8", default-features = false, optional = true, features = ["dont-define-symbols"] }
 bobcat-maths = { version = ">=0.9.8", default-features = false }
 bobcat-interfaces = { version = ">=0.9.8", default-features = false }
-stylus-chainlink-price-feeds = { version = ">=0.2.0", default-features = false }
+stylus-chainlink-price-feeds = { version = ">=0.2.1", default-features = false }
 stylus-sdk = { version = ">=0.10.0", default-features = false, optional = true }
 
 [features]
