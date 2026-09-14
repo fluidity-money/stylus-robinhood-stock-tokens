@@ -177,3 +177,41 @@ impl From<StockToken> for [u8; 20] {
         token.addr()
     }
 }
+
+/// Price lookup through `stylus-chainlink-price-feeds`' Bobcat backend.
+#[cfg(feature = "bobcat-sdk")]
+pub mod bobcat {
+    use bobcat_maths::U;
+    use stylus_chainlink_price_feeds::get_latest_round_data_opt;
+
+    use crate::StockToken;
+
+    pub fn price(token: StockToken) -> Option<U> {
+        get_latest_round_data_opt(token.oracle())
+    }
+}
+
+#[cfg(feature = "stylus-sdk")]
+pub mod stylus {
+    use stylus_chainlink_price_feeds::{ErrGetLatestRoundData, get_latest_round_data};
+    use stylus_sdk::{
+        alloy_primitives::U256,
+        prelude::{Host, StaticCallContext},
+    };
+
+    use crate::StockToken;
+
+    pub fn price<H, C>(host: &H, ctx: C, token: StockToken) -> Result<U256, ErrGetLatestRoundData>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        get_latest_round_data(host, ctx, token.oracle())
+    }
+}
+
+#[cfg(feature = "stylus-sdk")]
+pub use stylus::price;
+
+#[cfg(all(feature = "bobcat-sdk", not(feature = "stylus-sdk")))]
+pub use bobcat::price;
