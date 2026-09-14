@@ -8,18 +8,21 @@ homepage = "https://github.com/fluidity-money/stylus-robinhood-stock-tokens"
 repository = "https://github.com/fluidity-money/stylus-robinhood-stock-tokens"
 
 [dependencies]
-bobcat-cd = { version = ">=0.9.6", default-features = false }
-bobcat-maths = { version = ">=0.9.6", default-features = false, optional = true }
+bobcat-cd = { version = ">=0.9.8", default-features = false }
+bobcat-call = { version = ">=0.9.8", default-features = false, optional = true }
+bobcat-maths = { version = ">=0.9.8", default-features = false }
+bobcat-interfaces = { version = ">=0.9.8", default-features = false }
 stylus-chainlink-price-feeds = { version = ">=0.2.0", default-features = false }
 stylus-sdk = { version = ">=0.10.0", default-features = false, optional = true }
 
 [features]
-default = ["stylus-sdk"]
+default = ["stylus-sdk", "alloc"]
 bobcat-sdk = [
-    "dep:bobcat-maths",
+    "dep:bobcat-call",
     "stylus-chainlink-price-feeds/bobcat-sdk",
 ]
 stylus-sdk = [
     "dep:stylus-sdk",
     "stylus-chainlink-price-feeds/stylus-sdk",
 ]
+alloc = []
