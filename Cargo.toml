@@ -1,6 +1,6 @@
 [package]
 name = "stylus-robinhood-stock-tokens"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 license = "MIT"
 description = "Stylus crate to look up stock token metadata."
@@ -12,7 +12,7 @@ bobcat-cd = { version = ">=0.9.8", default-features = false }
 bobcat-call = { version = ">=0.9.8", default-features = false, optional = true, features = ["dont-define-symbols"] }
 bobcat-maths = { version = ">=0.9.8", default-features = false }
 bobcat-interfaces = { version = ">=0.9.8", default-features = false }
-stylus-chainlink-price-feeds = { version = ">=0.2.1", default-features = false }
+stylus-chainlink-price-feeds = { version = ">=0.3.0", default-features = false }
 stylus-sdk = { version = ">=0.10.0", default-features = false, optional = true }
 
 [features]

@@ -4,7 +4,7 @@ use bobcat_cd::address;
 
 use bobcat_maths::U;
 
-pub use stylus_chainlink_price_feeds::PriceFeed;
+pub use stylus_chainlink_price_feeds::{ChainlinkPriceFeed, robinhood::Robinhood};
 
 pub(crate) use bobcat_interfaces::{eip20::*, robinhood_stock_tokens::*};
 
@@ -146,47 +146,47 @@ impl StockToken {
         18
     }
 
-    pub const fn oracle(self) -> PriceFeed {
+    pub const fn oracle(self) -> Robinhood {
         match self {
-            Self::Aapl => PriceFeed::AaplUsd,
-            Self::Amd => PriceFeed::AmdUsd,
-            Self::Amzn => PriceFeed::AmznUsd,
-            Self::Asml => PriceFeed::AsmlUsd,
-            Self::Baba => PriceFeed::BabaUsd,
-            Self::Clsk => PriceFeed::ClskUsd,
-            Self::Coin => PriceFeed::CoinUsd,
-            Self::Crcl => PriceFeed::CrclUsd,
-            Self::Crwv => PriceFeed::CrwvUsd,
-            Self::Dell => PriceFeed::DellUsd,
-            Self::Ewy => PriceFeed::EwyUsd,
-            Self::Gme => PriceFeed::GmeUsd,
-            Self::Googl => PriceFeed::GooglUsd,
-            Self::Intc => PriceFeed::IntcUsd,
-            Self::Ionq => PriceFeed::IonqUsd,
-            Self::Meta => PriceFeed::MetaUsd,
-            Self::Msft => PriceFeed::MsftUsd,
-            Self::Mstr => PriceFeed::MstrUsd,
-            Self::Mu => PriceFeed::MuUsd,
-            Self::Nbis => PriceFeed::NbisUsd,
-            Self::Nvda => PriceFeed::NvdaUsd,
-            Self::Orcl => PriceFeed::OrclUsd,
-            Self::Pltr => PriceFeed::PltrUsd,
-            Self::Qqq => PriceFeed::QqqUsd,
-            Self::Rgti => PriceFeed::RgtiUsd,
-            Self::Rklb => PriceFeed::RklbUsd,
-            Self::Sgov => PriceFeed::SgovUsd,
-            Self::Slv => PriceFeed::SlvUsd,
-            Self::Sndk => PriceFeed::SndkUsd,
-            Self::Spcx => PriceFeed::SpcxUsd,
-            Self::Spy => PriceFeed::SpyUsd,
-            Self::Tsla => PriceFeed::TslaUsd,
-            Self::Tsm => PriceFeed::TsmUsd,
-            Self::Usar => PriceFeed::UsarUsd,
-            Self::Uso => PriceFeed::UsoUsd,
+            Self::Aapl => Robinhood::AaplUsd,
+            Self::Amd => Robinhood::AmdUsd,
+            Self::Amzn => Robinhood::AmznUsd,
+            Self::Asml => Robinhood::AsmlUsd,
+            Self::Baba => Robinhood::BabaUsd,
+            Self::Clsk => Robinhood::ClskUsd,
+            Self::Coin => Robinhood::CoinUsd,
+            Self::Crcl => Robinhood::CrclUsd,
+            Self::Crwv => Robinhood::CrwvUsd,
+            Self::Dell => Robinhood::DellUsd,
+            Self::Ewy => Robinhood::EwyUsd,
+            Self::Gme => Robinhood::GmeUsd,
+            Self::Googl => Robinhood::GooglUsd,
+            Self::Intc => Robinhood::IntcUsd,
+            Self::Ionq => Robinhood::IonqUsd,
+            Self::Meta => Robinhood::MetaUsd,
+            Self::Msft => Robinhood::MsftUsd,
+            Self::Mstr => Robinhood::MstrUsd,
+            Self::Mu => Robinhood::MuUsd,
+            Self::Nbis => Robinhood::NbisUsd,
+            Self::Nvda => Robinhood::NvdaUsd,
+            Self::Orcl => Robinhood::OrclUsd,
+            Self::Pltr => Robinhood::PltrUsd,
+            Self::Qqq => Robinhood::QqqUsd,
+            Self::Rgti => Robinhood::RgtiUsd,
+            Self::Rklb => Robinhood::RklbUsd,
+            Self::Sgov => Robinhood::SgovUsd,
+            Self::Slv => Robinhood::SlvUsd,
+            Self::Sndk => Robinhood::SndkUsd,
+            Self::Spcx => Robinhood::SpcxUsd,
+            Self::Spy => Robinhood::SpyUsd,
+            Self::Tsla => Robinhood::TslaUsd,
+            Self::Tsm => Robinhood::TsmUsd,
+            Self::Usar => Robinhood::UsarUsd,
+            Self::Uso => Robinhood::UsoUsd,
         }
     }
 
-    pub const fn oracle_addr(self) -> Address {
+    pub fn oracle_addr(self) -> Address {
         self.oracle().addr()
     }
 
@@ -602,7 +602,9 @@ pub mod bobcat {
 
     use bobcat_call::{call_bool, static_call_bool_opt, static_call_word_opt};
 
-    use stylus_chainlink_price_feeds::get_latest_round_data_opt;
+    use stylus_chainlink_price_feeds::{
+        get_latest_round_data_opt, get_latest_round_data_split_opt,
+    };
 
     use super::*;
 
@@ -611,6 +613,10 @@ pub mod bobcat {
 
     pub fn price(t: StockToken) -> Option<U> {
         get_latest_round_data_opt(t.oracle())
+    }
+
+    pub fn price_split(t: StockToken) -> Option<(U, U)> {
+        get_latest_round_data_split_opt(t.oracle())
     }
 
     pub fn paused(t: StockToken) -> Option<bool> {
@@ -634,7 +640,12 @@ pub mod bobcat {
     }
 
     pub fn transfer(t: StockToken, recipient: Address, amt: U) -> bool {
-        call_bool(t.addr(), &make_fn_transfer(recipient, &amt), &U::ZERO, u64::MAX)
+        call_bool(
+            t.addr(),
+            &make_fn_transfer(recipient, &amt),
+            &U::ZERO,
+            u64::MAX,
+        )
     }
 
     pub fn transfer_from(t: StockToken, from: Address, recipient: Address, amt: U) -> bool {
@@ -646,13 +657,22 @@ pub mod bobcat {
         )
     }
 
-    pub fn permit(t: StockToken, owner: Address, spender: Address, value: U, deadline: U, v: u8, r: U, s: U) -> bool {
-         call_bool(
-             t.addr(),
-             &make_fn_permit(owner, spender, &value, &deadline, v, &r, &s),
-             &U::ZERO,
-             u64::MAX
-         )
+    pub fn permit(
+        t: StockToken,
+        owner: Address,
+        spender: Address,
+        value: U,
+        deadline: U,
+        v: u8,
+        r: U,
+        s: U,
+    ) -> bool {
+        call_bool(
+            t.addr(),
+            &make_fn_permit(owner, spender, &value, &deadline, v, &r, &s),
+            &U::ZERO,
+            u64::MAX,
+        )
     }
 }
 
@@ -664,12 +684,13 @@ pub mod stylus {
 
     use stylus_chainlink_price_feeds::{
         ErrGetLatestRoundData, ErrGetLatestRoundDataReason, get_latest_round_data,
+        get_latest_round_data_split,
     };
 
     use core::fmt::{Display, Formatter, Result as FmtResult};
 
     use stylus_sdk::{
-        alloy_primitives::{Address as StylusAddr, U256, FixedBytes},
+        alloy_primitives::{Address as StylusAddr, FixedBytes, U256},
         call,
         prelude::{
             Host, MutatingCallContext, StaticCallContext, calls::errors::Error as StylusError,
@@ -701,6 +722,27 @@ pub mod stylus {
         C: StaticCallContext,
     {
         get_latest_round_data(host, ctx, t.oracle()).map_err(|ErrGetLatestRoundData(x, v)| {
+            match (x, v) {
+                (x, ErrGetLatestRoundDataReason::Revert) => {
+                    ErrContractCall(x, ErrContractCallReason::Revert)
+                }
+                (x, ErrGetLatestRoundDataReason::BadRd) => {
+                    ErrContractCall(x, ErrContractCallReason::BadRd)
+                }
+            }
+        })
+    }
+
+    pub fn price_split<H, C>(
+        host: &H,
+        ctx: C,
+        t: StockToken,
+    ) -> Result<(U256, U256), ErrContractCall>
+    where
+        H: Host + ?Sized,
+        C: StaticCallContext,
+    {
+        get_latest_round_data_split(host, ctx, t.oracle()).map_err(|ErrGetLatestRoundData(x, v)| {
             match (x, v) {
                 (x, ErrGetLatestRoundDataReason::Revert) => {
                     ErrContractCall(x, ErrContractCallReason::Revert)
@@ -793,12 +835,7 @@ pub mod stylus {
         C: MutatingCallContext,
     {
         let amt: [u8; 32] = amt.to_be_bytes();
-        let rd = call(
-            &make_fn_transfer(*recipient, &amt.into()),
-            host,
-            ctx,
-            t,
-        )?;
+        let rd = call(&make_fn_transfer(*recipient, &amt.into()), host, ctx, t)?;
         U256::try_from_be_slice(&rd).ok_or(ErrContractCall(rd, ErrContractCallReason::BadRd))
     }
 
@@ -834,7 +871,7 @@ pub mod stylus {
         deadline: U256,
         v: u8,
         FixedBytes(r): FixedBytes<32>,
-        FixedBytes(s): FixedBytes<32>
+        FixedBytes(s): FixedBytes<32>,
     ) -> Result<U256, ErrContractCall>
     where
         H: Host + ?Sized,
@@ -843,7 +880,15 @@ pub mod stylus {
         let value: [u8; 32] = value.to_be_bytes();
         let deadline: [u8; 32] = deadline.to_be_bytes();
         let rd = call(
-            &make_fn_permit(*owner, *spender, &value.into(), &deadline.into(), v, &r.into(), &s.into()),
+            &make_fn_permit(
+                *owner,
+                *spender,
+                &value.into(),
+                &deadline.into(),
+                v,
+                &r.into(),
+                &s.into(),
+            ),
             host,
             ctx,
             t,
